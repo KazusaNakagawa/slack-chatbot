@@ -5,26 +5,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# API トークンを設定する
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-# OpenAI: Prompt params
-ENGINE = 'text-davinci-003'
-
-openai.api_key = OPENAI_API_KEY
 
 class OpenAI:
 
-  def __init__(self, engine=ENGINE):
-     self.engine = engine
+  def __init__(self, engine='text-davinci-003'):
+      """OpenAI API を使用するためのクラス
+       Args:
+         engine (str): 使用する言語モデルエンジン. デフォルトは text-davinci-003
+      """
+      self.engine = engine
+      # API トークンを設定する
+      openai.api_key = os.getenv('OPENAI_API_KEY')
 
-  def response_text(self, prompt):
+  def response_text(self, prompt: str, temperature=0.3) -> str:
+      """OpenAI API にリクエストを送信し、返信を取得する
+        Args:
+          prompt (str): プロンプト
+          temperature (float): 返信のランダム性を制御する. 値が大きいほどランダム性が高くなる
+
+        Returns: 返信 (str)
+      """
       response = openai.Completion.create(
           engine=self.engine,
           prompt=prompt,
           max_tokens=1024,
           n=1,
           stop=None,
-          temperature=0.7
+          temperature=temperature,
       )
       return response.choices[0].text.strip()
